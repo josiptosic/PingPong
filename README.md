@@ -1,0 +1,1 @@
+Projekt je napravljen u VS2019 u Windows 10 operativnom sustavu. Rađen je uz pomoć SDL2 biblioteke. Moguće ga je prevesti uz pomoć lokalnog Windows Debuggera(x64). Biblioteka je smještena u SDL2 mapi.Linkeri su u lokalnom direktoriju projekta. Uz izvršnu datoteku prilikom pokretanja potrebno je imati SDL.dll linker.
