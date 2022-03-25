@@ -1,11 +1,22 @@
 #include <SDL2/SDL.h>
-#include "Display.h"
+#include "Engine.hpp"
+#include "UpravljacIgre.h"
 
-using namespace CircuitMessPong;
+
+
+
+
+
 
 int main(int argc, char* argv[]) {
 	
-	SDL_Init(SDL_INIT_VIDEO);
+
+	Display zaslon(640, 480);
+	UpravljacIgre Pokretanje(zaslon);
+	
+
+
+	/*SDL_Init(SDL_INIT_VIDEO);
 	
 	SDL_Window* window = SDL_CreateWindow("PingPong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -42,7 +53,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	SDL_Quit(); 
-
+	*/
 
 	return 0;
 }

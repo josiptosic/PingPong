@@ -44,5 +44,8 @@
     <ClInclude Include="UpravljacIgre.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
