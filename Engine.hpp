@@ -8,22 +8,15 @@ using namespace std;
 
 class Display
 {
-protected:
+public:
 	SDL_Window* Prozor;
-	Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE;
+	Uint32 render_flags;
 	SDL_Renderer* frameBuffer;
 
-public:
 	Display(int sirina, int visina) {
 		Sirina = sirina;
 		Visina = visina;
-
-		SDL_Init(SDL_INIT_VIDEO);
-
-		Prozor = SDL_CreateWindow("PingPong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Sirina, Visina, 0);
-		if (!Prozor) std::cout << "Dogodila se greška prilikom stvaranja prozora!" << std::endl;
-		frameBuffer = SDL_CreateRenderer(Prozor, -1, render_flags);
-		if (!frameBuffer) { std::cout << "Dogodila se greška prilikom stvaranja frameBuffera!" << std::endl; SDL_DestroyWindow(Prozor); }
+		render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 	}
 
 	~Display() {
@@ -39,16 +32,24 @@ public:
 	};
 
 	boja crna,
-		crvena{ crvena.r = 255 },
-		zelena{ zelena.g = 255 },
-		cijan{ cijan.g = 255, cijan.b = 255 },
-		ljubicasta{ ljubicasta.r = 255, ljubicasta.b = 255 },
-		zuta{ zuta.r = 255, zuta.g = 255 },
+		crvena{ crvena.r = 255, crvena.g = 0, crvena.b = 0 },
+		zelena{ zelena.r = 0, zelena.g = 255, zelena.b = 0 },
+		plava{ plava.r = 0, plava.g = 0, plava.b = 255 },
+		cijan{ cijan.r = 0, cijan.g = 255, cijan.b = 255 },
+		ljubicasta{ ljubicasta.r = 255, ljubicasta.g = 0,ljubicasta.b = 255 },
+		zuta{ zuta.r = 255, zuta.g = 255, zuta.b = 0 },
 		bijela{ bijela.r = 255, bijela.g = 255, bijela.b = 255 },
-		tamnocrvena{ tamnocrvena.r = 86 },
-		tamnozelena{ tamnozelena.g = 86 },
-		tamnoplava{ tamnoplava.b = 86 };
+		tamnocrvena{ tamnocrvena.r = 86, tamnocrvena.g = 0, tamnocrvena.b = 0 },
+		tamnozelena{ tamnozelena.r = 0, tamnozelena.g = 86, tamnozelena.b = 0 },
+		tamnoplava{ tamnoplava.r = 0, tamnoplava.g = 0, tamnoplava.b = 86 };
 
+	void stvoriKontekst() {
+		SDL_Init(SDL_INIT_VIDEO);
+		Prozor = SDL_CreateWindow("PingPong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Sirina, Visina, 0);
+		//if (!Prozor) std::cout << "Dogodila se greška prilikom stvaranja prozora!" << std::endl;
+		frameBuffer = SDL_CreateRenderer(Prozor, -1, render_flags);
+		//if (!frameBuffer) { std::cout << "Dogodila se greška prilikom stvaranja frameBuffera!" << std::endl; SDL_DestroyWindow(Prozor); }
+	}
 	void crtajPravokutnik(int polozajX, int polozajY, int sirina, int visina, boja b) {
 		SDL_Rect pravokutnik;
 		pravokutnik.x = polozajX;
@@ -128,6 +129,7 @@ public:
 		w = 20; h = 20;
 		smjer(d);
 	}
+	Loptica() {}
 	void smjer(Display d, Key K) {}
 	void smjer(Display d) {
 		if (x == d.Sirina) { x = d.Sirina / 2; y = d.Visina / 2; dx *= -1; dy *= -1; }
@@ -182,7 +184,7 @@ public:
 		dy = 20;
 		if (l.dy < 0) { dy *= -1; }
 	}
-
+	Protivnik() {}
 	int pogodak;
 	Loptica* l;
 
