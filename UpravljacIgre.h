@@ -8,22 +8,26 @@
 	public:
 		UpravljacIgre(Display d) {
 			d.stvoriKontekst();
-
-			SDL_Delay(3000);
-			Display* dP=new Display(d.Sirina,d.Visina);
+			
+			Display* dP;;
 			dP = &d;
+			
+			Igrac i;
+			Igrac* iP = &i;// = new Igrac();
+			
+			i.postaviPocetneDimenzije(&d);
+			//SDL_Delay(3000);
+			//iP->postaviPocetneDimenzije(d);// iP = i;
 
-			Igrac* iP = new Igrac(d);
-			Igrac i(d);
-			iP = &i;
-
-			Loptica* lP = new Loptica(d);
-			Loptica lC(d);
-			lP = &lC;
-
-			Protivnik* pP = new Protivnik(d,lC);
-			Protivnik pC(d,lC);
-			pP = &pC;
+			//Loptica* lP = new Loptica();
+			Loptica lC;
+			lC.postaviPocetneDimenzije(&d);
+			//lP = &lC;
+			
+			//Protivnik* pP = new Protivnik();
+			Protivnik pC;
+			pC.postaviPocetneDimenzije(&d, &lC);
+			//pP = &pC;
 
 			KeyboardInput* kInput = new KeyboardInput();
 			KeyListener* kL = new KeyListener();
@@ -32,22 +36,21 @@
 			kL->dodajPojavu(iP);		
 			kInput->e;
 			kInput->pogon = true;
+
 			while (kInput->pogon==true) {
 				kInput->updateInput();
 				
-				iP->kretanje();
-				lP->kretanje();
-				pP->kretanje();
+				i.kretanje();
+				lC.kretanje();
+				pC.kretanje();
 				
-				
-				d.clear(d.tamnozelena);
+				d.clear(d.tamnoplava);
 				d.crtajBojom(d.bijela);
-				d.crtajPravokutnik(iP->x, iP->y, iP->w, iP->h, d.bijela);
-				d.crtajPravokutnik(lP->x, lP->y, lP->w, lP->h, d.zuta);
-				d.crtajPravokutnik(pP->x, pP->y, pP->w, pP->h, d.bijela);
-
+				d.crtajPravokutnik(i.x, i.y, i.w, i.h, d.bijela);
+				d.crtajPravokutnik(pC.x, pC.y, pC.w, pC.h, d.bijela);
+				d.crtajPravokutnik(lC.x, lC.y, lC.w, lC.h, d.bijela);
 				d.commit();
-				SDL_Delay(42);
+				SDL_Delay(500);
 			}	
 		}
 	};

@@ -57,7 +57,9 @@ public:
 		pravokutnik.w = sirina;
 		pravokutnik.h = visina;
 		crtajBojom(b);
+		
 		SDL_RenderDrawRect(frameBuffer, &pravokutnik);
+		SDL_RenderFillRect(frameBuffer, &pravokutnik);
 	}
 	void crtajBojom(boja b) {
 
@@ -125,16 +127,15 @@ class Loptica : public Pojava {
 public:
 	int dx = 10;
 
-	Loptica(Display d) {
-		x = d.Sirina, y = d.Visina;
-		w = 20; h = 20;
+	void postaviPocetneDimenzije(Display* d) {
+		x = d->Sirina / 2, y = d->Visina / 2;
+		w = 20; h = 20; dx = 10, dy = 10;
 		smjer(d);
 	}
-	Loptica() {}
 	void smjer(Display d, Key K) {}
-	void smjer(Display d) {
-		if (x == d.Sirina) { x = d.Sirina / 2; y = d.Visina / 2; dx *= -1; dy *= -1; }
-		else if (x == 0) { x = d.Sirina / 2; y = d.Visina / 2; dx *= 1; dy *= 1; }
+	void smjer(Display* d) {
+		if (x == d->Sirina) { x = d->Sirina / 2; y = d->Visina / 2; dx *= -1; dy *= -1; }
+		else if (x == 0) { x = d->Sirina / 2; y = d->Visina / 2; dx *= 1; dy *= 1; }
 		else { x += dx; y += dy; }
 	}
 	void smjer(Key K) {}
@@ -148,15 +149,13 @@ public:
 
 class Igrac : public Pojava {
 public:
-	Igrac(Display d) {
-		stanjeTipke = NISTA;
-		pogodak = 0;
-		x = 0; dy = 10;
-		y = d.Visina / 2;
+	
+	void postaviPocetneDimenzije(Display* d) {
+		x = 0; y = d->Visina / 2;
 		w = 20; h = 100;
-		smjer(stanjeTipke);
+		smjer(NISTA);
 	}
-	Igrac() {}
+
 	void smjer(Key K) {
 		if (K == DOLJE) {
 			dy = 20;
@@ -177,22 +176,24 @@ public:
 
 class Protivnik : public Pojava {
 public:
-	Protivnik(Display d, Loptica l) {
-		pogodak = 0;
-		x = d.Sirina - 20;
-		y = d.Visina / 2;
-		w = 20; h = 100;
-		dy = 20;
-		if (l.dy < 0) { dy *= -1; }
-	}
-	Protivnik() {
-	}
+	
+	
 	int pogodak;
-	Loptica* l;
+	
 
+	void postaviPocetneDimenzije(Display* d, Loptica* l) {
+		pogodak = 0;
+		x = d->Sirina - 20;
+		y = d->Visina / 2;
+		w = 20; h = 100;
+		dy = 5;
+		if (l->dy < 0) { dy *= -1; }
+	}
+
+	void smjer(Key K){}
 	void smjer(Display d) {}
 	void smjer(Display d, Key K) {}
-	void smjer(Key K) {
+	void smjer(Key K, Loptica* l) {
 		if ((l->dy < 0 && dy < 0) || (l->dy > 0 && dy < 0)) {
 			dy *= -1;
 		}
@@ -204,9 +205,7 @@ public:
 
 class KeyListener : public InputListener {
 public:
-	KeyListener() {
-		opPojava = new Igrac();
-	}
+	
 	void dodajPojavu(Igrac* p) {
 		opPojava = p;
 	}
