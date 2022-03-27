@@ -108,6 +108,7 @@ public:
 class Pojava {
 public:
 	virtual void smjer(Key K) = 0;
+	virtual void kretanje(){}
 	void postaviStanje(Key K) {
 		stanjeTipke = K;
 	}
@@ -184,7 +185,8 @@ public:
 		dy = 20;
 		if (l.dy < 0) { dy *= -1; }
 	}
-	Protivnik() {}
+	Protivnik() {
+	}
 	int pogodak;
 	Loptica* l;
 
