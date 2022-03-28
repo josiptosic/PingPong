@@ -28,17 +28,19 @@
 			Protivnik pC;
 			pC.postaviPocetneDimenzije(&d, &lC);
 			//pP = &pC;
+			KeyboardInput kInput;
+			KeyboardInput* pKInput=&kInput;
+			KeyListener kL;
+			KeyListener* pKL = new KeyListener;//=&kL;
+			pKL = &kL;
 
-			KeyboardInput* kInput = new KeyboardInput();
-			KeyListener* kL = new KeyListener();
+			pKInput->addListener(pKL);
+			pKL->dodajPojavu(iP);		
+			pKInput->e;
+			pKInput->pogon = true;
 
-			kInput->addListener(kL);
-			kL->dodajPojavu(iP);		
-			kInput->e;
-			kInput->pogon = true;
-
-			while (kInput->pogon==true) {
-				kInput->updateInput();
+			while (pKInput->pogon==true) {
+				pKInput->updateInput();
 				
 				otkrivanjeSudara(&lC, &i, &pC);
 				i.kretanje();
@@ -51,7 +53,7 @@
 				d.crtajPravokutnik(pC.x, pC.y, pC.w, pC.h, d.bijela);
 				d.crtajPravokutnik(lC.x, lC.y, lC.w, lC.h, d.bijela);
 				d.commit();
-				SDL_Delay(50);
+				SDL_Delay(100);
 			}	
 		}
 

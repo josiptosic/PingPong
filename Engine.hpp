@@ -90,7 +90,7 @@ public:
 
 	/*void buttonPressed(Key K) {}
 	void buttonReleased(Key K) {}*/
-
+	//virtual void dodajPojavu(Pojava* p);
 	virtual void buttonPressed(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi pritisak tipke
 	virtual void buttonReleased(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi otpuštanje tipke
 };
@@ -200,16 +200,23 @@ public:
 		if ((l->dy < 0 && dy > 0) || (l->dy > 0 && dy < 0)) {
 			dy *= -1;
 		}
+
 		if (y > l->y) { dy = -10; }
 		else { dy = 10; }
 
 		if (d->Visina <= (y + h)) { dy = 0; }
 		else if (y <= 0) { dy = 0; }
+		//else if (l->y > y && ((y + h) >= d->Visina) && l->y >= 0) { dy = -10; }
 
 		
 		if (dy == 0 && y == 0) { dy = 10; }
-		if (dy == 0 && (y + h) >= d->Visina) { dy = -10; }
 		
+		if (dy == 0 && (y + h) >= d->Visina) { dy = -10; }
+		if (l->y > y + h) { dy = 10; }
+		
+		
+		if (l->y > y && ((y + h) >= d->Visina)) { dy = 0; }
+		//
 		
 	}
 	void kretanje(Display* d, Loptica* l) {
@@ -249,10 +256,10 @@ public:
 		pogon = true;
 	}
 	void updateInput() {
+		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
 			case SDL_KEYDOWN:
-				
 				updateListeners();
 				break;
 			case SDL_KEYUP:
