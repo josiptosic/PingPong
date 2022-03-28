@@ -40,6 +40,7 @@
 			while (kInput->pogon==true) {
 				kInput->updateInput();
 				
+				otkrivanjeSudara(&lC, &i, &pC);
 				i.kretanje();
 				lC.kretanje(&d);
 				pC.kretanje(&d, &lC);
@@ -52,6 +53,11 @@
 				d.commit();
 				SDL_Delay(50);
 			}	
+		}
+
+		void otkrivanjeSudara(Loptica* l, Igrac* i, Protivnik* p) {
+			if ((l->x <= i->w) && ((l->y + l->h) >= i->y) && (i->y + i->h) >= (l->y + l->h)) { l->dx *= -1; }
+			if ((l->x >= p->x) && ((l->y + l->h) >= p->y) && (p->y + p->h) >= (l->y + l->h)) { l->dx *= -1; }
 		}
 	};
 

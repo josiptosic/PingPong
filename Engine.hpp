@@ -166,7 +166,6 @@ public:
 		else if (y == d->Visina - h) { dy *= -1; }
 		else if (y == 0) { dy *= -1; }
 		else if (x >= d->Sirina) { postaviPocetneDimenzije(d); }
-		//else { x += dx; y += dy; }
 	}
 	void smjer(Key K) {}
 	void kretanje(Display* d) {
@@ -197,17 +196,21 @@ public:
 	void smjer(Display d) {}
 	void smjer(Display d, Key K) {}
 	void smjer(Display* d, Loptica* l) {
-		/*
-		if ((l->dy < 0 && dy < 0) || (l->dy > 0 && dy < 0)) {
+		
+		if ((l->dy < 0 && dy > 0) || (l->dy > 0 && dy < 0)) {
 			dy *= -1;
-		}*/
+		}
 		if (y > l->y) { dy = -10; }
 		else { dy = 10; }
 
 		if (d->Visina <= (y + h)) { dy = 0; }
 		else if (y <= 0) { dy = 0; }
-		else if (dy == 0 && (y + h) == d->Visina) { dy = -10; }
-		else if (dy == 0 && y == 0) { dy = 10; }
+
+		
+		if (dy == 0 && y == 0) { dy = 10; }
+		if (dy == 0 && (y + h) >= d->Visina) { dy = -10; }
+		
+		
 	}
 	void kretanje(Display* d, Loptica* l) {
 		y += dy;
