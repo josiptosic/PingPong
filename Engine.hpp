@@ -123,36 +123,12 @@ public:
 	int dy;
 };
 
-class Loptica : public Pojava {
-public:
-	int dx = 10;
-
-	void postaviPocetneDimenzije(Display* d) {
-		x = d->Sirina / 2, y = d->Visina / 2;
-		w = 20; h = 20; dx = 10, dy = 10;
-		smjer(d);
-	}
-	void smjer(Display d, Key K) {}
-	void smjer(Display* d) {
-		if (x == d->Sirina) { x = d->Sirina / 2; y = d->Visina / 2; dx *= -1; dy *= -1; }
-		else if (x == 0) { x = d->Sirina / 2; y = d->Visina / 2; dx *= 1; dy *= 1; }
-		else { x += dx; y += dy; }
-	}
-	void smjer(Key K) {}
-	void kretanje() {
-
-		x += dx;
-		y += dy;
-
-	}
-};
-
 class Igrac : public Pojava {
 public:
 	
 	void postaviPocetneDimenzije(Display* d) {
-		x = 0; y = d->Visina / 2;
 		w = 20; h = 100;
+		x = 0; y = d->Visina / 2 - h / 2;
 		smjer(NISTA);
 	}
 
@@ -174,6 +150,33 @@ public:
 };
 
 
+class Loptica : public Pojava {
+public:
+	int dx = 10;
+
+	void postaviPocetneDimenzije(Display* d) {
+		x = d->Sirina / 2, y = d->Visina / 2;
+		w = 20; h = 20; dx = 10, dy = -10;
+
+	}
+	void smjer(Display d, Key K) {}
+	void smjer(Display* d) {
+		if (x == d->Sirina) { x = d->Sirina / 2; y = d->Visina / 2; dx *= -1; dy *= -1; }
+		else if (x == 0) { x = d->Sirina / 2; y = d->Visina / 2; dx *= 1; dy *= 1; }
+		else if (y == d->Visina - h) { dy *= -1; }
+		else if (y == 0) { dy *= -1; }
+		else if (x >= d->Sirina) { postaviPocetneDimenzije(d); }
+		//else { x += dx; y += dy; }
+	}
+	void smjer(Key K) {}
+	void kretanje(Display* d) {
+
+		x += dx;
+		y += dy;
+		smjer(d);
+	}
+};
+
 class Protivnik : public Pojava {
 public:
 	
@@ -183,9 +186,9 @@ public:
 
 	void postaviPocetneDimenzije(Display* d, Loptica* l) {
 		pogodak = 0;
-		x = d->Sirina - 20;
-		y = d->Visina / 2;
 		w = 20; h = 100;
+		x = d->Sirina - 20;
+		y = d->Visina / 2 - h / 2;
 		dy = 5;
 		if (l->dy < 0) { dy *= -1; }
 	}
@@ -193,15 +196,26 @@ public:
 	void smjer(Key K){}
 	void smjer(Display d) {}
 	void smjer(Display d, Key K) {}
-	void smjer(Key K, Loptica* l) {
+	void smjer(Display* d, Loptica* l) {
+		/*
 		if ((l->dy < 0 && dy < 0) || (l->dy > 0 && dy < 0)) {
 			dy *= -1;
-		}
+		}*/
+		if (y > l->y) { dy = -10; }
+		else { dy = 10; }
+
+		if (d->Visina <= (y + h)) { dy = 0; }
+		else if (y <= 0) { dy = 0; }
+		else if (dy == 0 && (y + h) == d->Visina) { dy = -10; }
+		else if (dy == 0 && y == 0) { dy = 10; }
 	}
-	void kretanje() {
+	void kretanje(Display* d, Loptica* l) {
 		y += dy;
+		smjer(d, l);
 	}
 };
+
+
 
 class KeyListener : public InputListener {
 public:

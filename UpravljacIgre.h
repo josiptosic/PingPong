@@ -41,8 +41,8 @@
 				kInput->updateInput();
 				
 				i.kretanje();
-				lC.kretanje();
-				pC.kretanje();
+				lC.kretanje(&d);
+				pC.kretanje(&d, &lC);
 				
 				d.clear(d.tamnoplava);
 				d.crtajBojom(d.bijela);
@@ -50,7 +50,7 @@
 				d.crtajPravokutnik(pC.x, pC.y, pC.w, pC.h, d.bijela);
 				d.crtajPravokutnik(lC.x, lC.y, lC.w, lC.h, d.bijela);
 				d.commit();
-				SDL_Delay(500);
+				SDL_Delay(50);
 			}	
 		}
 	};
