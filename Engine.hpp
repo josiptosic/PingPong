@@ -81,31 +81,6 @@ enum Key {
 	DOLJE = 81
 };
 
-class InputListener
-{
-public:
-	InputListener() {
-
-	}
-
-	/*void buttonPressed(Key K) {}
-	void buttonReleased(Key K) {}*/
-	//virtual void dodajPojavu(Pojava* p);
-	virtual void buttonPressed(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi pritisak tipke
-	virtual void buttonReleased(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi otpuštanje tipke
-};
-
-class Input
-{
-public:
-
-	virtual void addListener(InputListener* listener) = 0;
-	virtual void removeListener(InputListener* listener) = 0;
-
-	SDL_Event e;
-	list<InputListener*> listeners;
-	bool pogon;
-};
 
 class Pojava {
 public:
@@ -132,21 +107,57 @@ public:
 		smjer(NISTA);
 	}
 
+	void postaviStanje(Key K) {
+		stanjeTipke = K;
+		//cout << stanjeTipke << endl;
+	}
+
 	void smjer(Key K) {
-		if (K == DOLJE) {
-			dy = 20;
+		
+		if (K == GORE) {
+			dy = -10; //cout << "Gore.";
 		}
-		else if (K == GORE) {
-			dy = -20;
+		else if (K == DOLJE) {
+			dy = 10; //cout << "Dolje." << endl;
 		}
 		else dy = 0;
+		
 	}
-	void kretanje() {
+	void kretanje(Display* d) {
+		
+		if (((y > 0) && ((y + h) < d->Visina)) || (y <= 0 && dy > 0) || (y + h >= d->Visina && dy < 0)) y += dy;
 		smjer(stanjeTipke);
-		y += dy;
 	}
 
 	int pogodak;
+};
+
+class InputListener
+{
+public:
+	InputListener() {
+
+	}
+
+	/*void buttonPressed(Key K) {}
+	void buttonReleased(Key K) {}*/
+	//
+	
+	virtual void dodajPojavu(Igrac* p) = 0;
+	virtual void buttonPressed(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi pritisak tipke
+	virtual void buttonReleased(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi otpuštanje tipke
+};
+
+class Input
+{
+public:
+
+	virtual void addListener(InputListener* listener) = 0;
+	virtual void removeListener(InputListener* listener) = 0;
+
+	//SDL_Event e;
+	list<InputListener*> listeners;
+	bool pogon;
 };
 
 
@@ -237,7 +248,7 @@ public:
 		promijeniStanje(K);
 	}
 	void buttonReleased(Key K) {
-		promijeniStanje(K);
+		promijeniStanje(NISTA);
 	}
 	void dodijeliPojavu(Igrac* p) {
 		opPojava = p;
@@ -251,19 +262,16 @@ public:
 
 class KeyboardInput : public Input {
 public:
-	KeyboardInput() {
-		e;
-		pogon = true;
-	}
+
 	void updateInput() {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
 			case SDL_KEYDOWN:
-				updateListeners();
+				updateListeners(e);
 				break;
 			case SDL_KEYUP:
-				updateListeners();
+				updateListeners(e);
 				break;
 			case SDL_QUIT: pogon = false;
 			default:
@@ -273,13 +281,18 @@ public:
 	}
 	void addListener(InputListener* listener) { kLst.push_back((KeyListener*)listener); }
 	void removeListener(InputListener* listener) { kLst.remove((KeyListener*)listener); }
-	void updateListeners() {
-		for (InputListener* l : listeners) {
-			switch (e.key.keysym.scancode) {
-			case RAZMAKNICA: l->buttonPressed(RAZMAKNICA);
-			case GORE: l->buttonPressed(GORE);
-			case DOLJE: l->buttonPressed(DOLJE);
-			default: break;
+	void updateListeners(SDL_Event e) {
+		for (KeyListener* l : kLst) {
+			if (e.type == SDL_KEYDOWN) {
+				switch (e.key.keysym.scancode) {
+				case SDL_SCANCODE_SPACE: l->buttonPressed(RAZMAKNICA); break;
+				case SDL_SCANCODE_UP: l->buttonPressed(GORE); break;
+				case SDL_SCANCODE_DOWN: l->buttonPressed(DOLJE); break;
+				default: break;
+				}
+			}
+			else if (e.type == SDL_KEYUP) {
+				l->buttonReleased(NISTA);
 			}
 		}
 	}

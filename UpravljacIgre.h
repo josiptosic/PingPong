@@ -31,19 +31,21 @@
 			KeyboardInput kInput;
 			KeyboardInput* pKInput=&kInput;
 			KeyListener kL;
-			KeyListener* pKL = new KeyListener;//=&kL;
+			InputListener* pKL;//=&kL;
 			pKL = &kL;
+			kL.opPojava;
+			kInput.kLst;
 
 			pKInput->addListener(pKL);
 			pKL->dodajPojavu(iP);		
-			pKInput->e;
+			//pKInput->e;
 			pKInput->pogon = true;
 
 			while (pKInput->pogon==true) {
 				pKInput->updateInput();
 				
 				otkrivanjeSudara(&lC, &i, &pC);
-				i.kretanje();
+				i.kretanje(&d);
 				lC.kretanje(&d);
 				pC.kretanje(&d, &lC);
 				
