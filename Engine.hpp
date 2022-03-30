@@ -2,7 +2,6 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-//#include <SDL2/begin_code.h>
 #include <iostream>
 #include <string>
 #include <list>
@@ -11,11 +10,12 @@ using namespace std;
 
 class Display
 {
-public:
+private:
 	SDL_Window* Prozor;
 	Uint32 render_flags;
 	SDL_Renderer* frameBuffer;
 
+public:
 	Display(int sirina, int visina) {
 		Sirina = sirina;
 		Visina = visina;
@@ -49,9 +49,9 @@ public:
 	void stvoriKontekst() {
 		SDL_Init(SDL_INIT_VIDEO);
 		Prozor = SDL_CreateWindow("PingPong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Sirina, Visina, 0);
-		//if (!Prozor) std::cout << "Dogodila se greška prilikom stvaranja prozora!" << std::endl;
+		if (!Prozor) std::cout << "Dogodila se greška prilikom stvaranja prozora!" << std::endl;
 		frameBuffer = SDL_CreateRenderer(Prozor, -1, render_flags);
-		//if (!frameBuffer) { std::cout << "Dogodila se greška prilikom stvaranja frameBuffera!" << std::endl; SDL_DestroyWindow(Prozor); }
+		if (!frameBuffer) { std::cout << "Dogodila se greška prilikom stvaranja frameBuffera!" << std::endl; SDL_DestroyWindow(Prozor); }
 	}
 	void crtajLiniju(int xP, int yP, int xZ, int yZ, boja b) {
 		SDL_SetRenderDrawColor(frameBuffer, b.r, b.g, b.b, 255);
@@ -75,18 +75,18 @@ public:
 		SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, poruka.c_str(), White);
 		SDL_Texture* Message = SDL_CreateTextureFromSurface(frameBuffer, surfaceMessage);
 		SDL_Rect Message_rect;
+
 		Message_rect.x = x;   
 		Message_rect.y = y; 
 		Message_rect.w = 15 * strlen(poruka.c_str()); 
 		Message_rect.h = 50; 
+
 		SDL_RenderCopy(frameBuffer, Message, NULL, &Message_rect);
 		SDL_RenderDrawRect(frameBuffer, &Message_rect);
 		SDL_FreeSurface(surfaceMessage);
 		SDL_DestroyTexture(Message);
-
 	}
 	void crtajBojom(boja b) {
-
 		SDL_SetRenderDrawColor(frameBuffer, b.r, b.g, b.b, 255);
 	}
 	void clear(boja b) {
@@ -105,7 +105,6 @@ enum Key {
 	DOLJE = 81
 };
 
-
 class Pojava {
 public:
 	virtual void smjer(Key K) = 0;
@@ -114,45 +113,35 @@ public:
 		stanjeTipke = K;
 	}
 	
-
-
 	SDL_Rect p;
 	Key stanjeTipke;
 
 	int x, y;
 	int w, h;
 	int dy;
-	
 };
 
 class Igrac : public Pojava {
 public:
-	
 	void postaviPocetneDimenzije(Display* d) {
 		w = 20; h = 100;
 		x = 0; y = d->Visina / 2 - h / 2;
 		smjer(NISTA);
 		pogodak = 0;
 	}
-
 	void postaviStanje(Key K) {
 		stanjeTipke = K;
-		//cout << stanjeTipke << endl;
 	}
-
 	void smjer(Key K) {
-		
 		if (K == GORE) {
-			dy = -10; //cout << "Gore.";
+			dy = -10;
 		}
 		else if (K == DOLJE) {
-			dy = 10; //cout << "Dolje." << endl;
+			dy = 10;
 		}
 		else dy = 0;
-		
 	}
 	void kretanje(Display* d) {
-		
 		if (((y > 0) && ((y + h) < d->Visina)) || (y <= 0 && dy > 0) || (y + h >= d->Visina && dy < 0)) y += dy;
 		smjer(stanjeTipke);
 	}
@@ -161,19 +150,13 @@ public:
 	}
 
 	int pogodak;
-
 };
 
 class InputListener
 {
 public:
-	InputListener() {
-
-	}
-
 	/*void buttonPressed(Key K) {}
 	void buttonReleased(Key K) {}*/
-	//
 	
 	virtual void dodajPojavu(Igrac* p) = 0;
 	virtual void buttonPressed(Key K) = 0; //implementacije Input razreda æe otpuštati ovu funkciju kada se dogodi pritisak tipke
@@ -183,11 +166,9 @@ public:
 class Input
 {
 public:
-
 	virtual void addListener(InputListener* listener) = 0;
 	virtual void removeListener(InputListener* listener) = 0;
 
-	//SDL_Event e;
 	list<InputListener*> listeners;
 	bool pogon;
 };
@@ -212,7 +193,6 @@ public:
 	}
 	void smjer(Key K) {}
 	void kretanje(Display* d) {
-
 		x += dx;
 		y += dy;
 		smjer(d);
@@ -221,11 +201,6 @@ public:
 
 class Protivnik : public Pojava {
 public:
-	
-	
-	
-	
-
 	void postaviPocetneDimenzije(Display* d, Loptica* l) {
 		pogodak = 0;
 		w = 20; h = 100;
@@ -234,33 +209,25 @@ public:
 		dy = 4;
 		if (l->dy < 0) { dy *= -1; }
 	}
-
 	void smjer(Key K){}
 	void smjer(Display d) {}
 	void smjer(Display d, Key K) {}
 	void smjer(Display* d, Loptica* l) {
+		if ((l->dy < 0 && dy > 0) || (l->dy > 0 && dy < 0)) dy *= -1;
 		
-		if ((l->dy < 0 && dy > 0) || (l->dy > 0 && dy < 0)) {
-			dy *= -1;
-		}
-
 		if (y > l->y) { dy = -4; }
 		else { dy = 4; }
-
+		
 		if (d->Visina <= (y + h)) { dy = 0; }
 		else if (y <= 0) { dy = 0; }
-		//else if (l->y > y && ((y + h) >= d->Visina) && l->y >= 0) { dy = -10; }
 
-		
 		if (dy == 0 && y == 0) { dy = 4; }
 		
 		if (dy == 0 && (y + h) >= d->Visina) { dy = -4; }
+		
 		if (l->y > y + h) { dy = 4; }
 		
-		
 		if (l->y > y && ((y + h) >= d->Visina)) { dy = 0; }
-		//
-		
 	}
 	void kretanje(Display* d, Loptica* l) {
 		y += dy;
@@ -273,11 +240,8 @@ public:
 	int pogodak;
 };
 
-
-
 class KeyListener : public InputListener {
 public:
-	
 	void dodajPojavu(Igrac* p) {
 		opPojava = p;
 	}
@@ -299,7 +263,6 @@ public:
 
 class KeyboardInput : public Input {
 public:
-
 	void updateInput() {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
