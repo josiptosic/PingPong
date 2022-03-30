@@ -1,7 +1,10 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+//#include <SDL2/begin_code.h>
 #include <iostream>
+#include <string>
 #include <list>
 
 using namespace std;
@@ -50,6 +53,10 @@ public:
 		frameBuffer = SDL_CreateRenderer(Prozor, -1, render_flags);
 		//if (!frameBuffer) { std::cout << "Dogodila se greška prilikom stvaranja frameBuffera!" << std::endl; SDL_DestroyWindow(Prozor); }
 	}
+	void crtajLiniju(int xP, int yP, int xZ, int yZ, boja b) {
+		SDL_SetRenderDrawColor(frameBuffer, b.r, b.g, b.b, 255);
+		SDL_RenderDrawLine(frameBuffer, xP, yP, xZ, yZ);
+	}
 	void crtajPravokutnik(int polozajX, int polozajY, int sirina, int visina, boja b) {
 		SDL_Rect pravokutnik;
 		pravokutnik.x = polozajX;
@@ -60,6 +67,23 @@ public:
 		
 		SDL_RenderDrawRect(frameBuffer, &pravokutnik);
 		SDL_RenderFillRect(frameBuffer, &pravokutnik);
+	}
+	void crtajTekst(string poruka, int x, int y){
+		TTF_Init();
+		TTF_Font* Font = TTF_OpenFont("fonts/Orbitron-Bold.ttf", 24);
+		SDL_Color White = { 255, 255, 255 };
+		SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, poruka.c_str(), White);
+		SDL_Texture* Message = SDL_CreateTextureFromSurface(frameBuffer, surfaceMessage);
+		SDL_Rect Message_rect;
+		Message_rect.x = x;   
+		Message_rect.y = y; 
+		Message_rect.w = 15 * strlen(poruka.c_str()); 
+		Message_rect.h = 50; 
+		SDL_RenderCopy(frameBuffer, Message, NULL, &Message_rect);
+		SDL_RenderDrawRect(frameBuffer, &Message_rect);
+		SDL_FreeSurface(surfaceMessage);
+		SDL_DestroyTexture(Message);
+
 	}
 	void crtajBojom(boja b) {
 
@@ -89,6 +113,8 @@ public:
 	void postaviStanje(Key K) {
 		stanjeTipke = K;
 	}
+	
+
 
 	SDL_Rect p;
 	Key stanjeTipke;
@@ -96,6 +122,7 @@ public:
 	int x, y;
 	int w, h;
 	int dy;
+	
 };
 
 class Igrac : public Pojava {
@@ -105,6 +132,7 @@ public:
 		w = 20; h = 100;
 		x = 0; y = d->Visina / 2 - h / 2;
 		smjer(NISTA);
+		pogodak = 0;
 	}
 
 	void postaviStanje(Key K) {
@@ -128,8 +156,12 @@ public:
 		if (((y > 0) && ((y + h) < d->Visina)) || (y <= 0 && dy > 0) || (y + h >= d->Visina && dy < 0)) y += dy;
 		smjer(stanjeTipke);
 	}
+	void uvecajPogodak() {
+		pogodak += 1;
+	}
 
 	int pogodak;
+
 };
 
 class InputListener
@@ -167,7 +199,7 @@ public:
 
 	void postaviPocetneDimenzije(Display* d) {
 		x = d->Sirina / 2, y = d->Visina / 2;
-		w = 20; h = 20; dx = 10, dy = -10;
+		w = 20; h = 20; dx = 5, dy = -5;
 
 	}
 	void smjer(Display d, Key K) {}
@@ -191,7 +223,7 @@ class Protivnik : public Pojava {
 public:
 	
 	
-	int pogodak;
+	
 	
 
 	void postaviPocetneDimenzije(Display* d, Loptica* l) {
@@ -199,7 +231,7 @@ public:
 		w = 20; h = 100;
 		x = d->Sirina - 20;
 		y = d->Visina / 2 - h / 2;
-		dy = 5;
+		dy = 4;
 		if (l->dy < 0) { dy *= -1; }
 	}
 
@@ -212,18 +244,18 @@ public:
 			dy *= -1;
 		}
 
-		if (y > l->y) { dy = -10; }
-		else { dy = 10; }
+		if (y > l->y) { dy = -4; }
+		else { dy = 4; }
 
 		if (d->Visina <= (y + h)) { dy = 0; }
 		else if (y <= 0) { dy = 0; }
 		//else if (l->y > y && ((y + h) >= d->Visina) && l->y >= 0) { dy = -10; }
 
 		
-		if (dy == 0 && y == 0) { dy = 10; }
+		if (dy == 0 && y == 0) { dy = 4; }
 		
-		if (dy == 0 && (y + h) >= d->Visina) { dy = -10; }
-		if (l->y > y + h) { dy = 10; }
+		if (dy == 0 && (y + h) >= d->Visina) { dy = -4; }
+		if (l->y > y + h) { dy = 4; }
 		
 		
 		if (l->y > y && ((y + h) >= d->Visina)) { dy = 0; }
@@ -234,6 +266,11 @@ public:
 		y += dy;
 		smjer(d, l);
 	}
+	void uvecajPogodak() {
+		pogodak += 1;
+	}
+
+	int pogodak;
 };
 
 
