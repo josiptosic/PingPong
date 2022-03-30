@@ -159,18 +159,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Display.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Pojava.cpp" />
     <ClCompile Include="UpravljacIgre.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Display.h" />
     <ClInclude Include="Engine.hpp" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Pojava.h" />
     <ClInclude Include="UpravljacIgre.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
