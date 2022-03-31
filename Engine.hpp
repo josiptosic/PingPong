@@ -14,6 +14,7 @@ private:
 	SDL_Window* Prozor;
 	Uint32 render_flags;
 	SDL_Renderer* frameBuffer;
+	TTF_Font* Font;
 
 public:
 	Display(int sirina, int visina) {
@@ -48,6 +49,8 @@ public:
 
 	void stvoriKontekst() {
 		SDL_Init(SDL_INIT_VIDEO);
+		TTF_Init();
+		Font = TTF_OpenFont("fonts/Orbitron-Bold.ttf", 24);
 		Prozor = SDL_CreateWindow("PingPong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Sirina, Visina, 0);
 		if (!Prozor) std::cout << "Dogodila se greška prilikom stvaranja prozora!" << std::endl;
 		frameBuffer = SDL_CreateRenderer(Prozor, -1, render_flags);
@@ -69,8 +72,6 @@ public:
 		SDL_RenderFillRect(frameBuffer, &pravokutnik);
 	}
 	void crtajTekst(string poruka, int x, int y){
-		TTF_Init();
-		TTF_Font* Font = TTF_OpenFont("fonts/Orbitron-Bold.ttf", 24);
 		SDL_Color White = { 255, 255, 255 };
 		SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, poruka.c_str(), White);
 		SDL_Texture* Message = SDL_CreateTextureFromSurface(frameBuffer, surfaceMessage);
