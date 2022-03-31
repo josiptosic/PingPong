@@ -1,4 +1,7 @@
-PingPong - posljednja verzija - 1.0.2
+PingPong - posljednja verzija - 1.0.3
+	
+	- 31.3.[bugfix: memory leak zbog iterativnog iniciranja font rendering rutine]
+
 Aplikacija je izvedena kao C++ projekt u Visual Studiju 2019, u Windows 10 operacijskom sustavu.
 Korišten je ugraðeni VC++ x64 Debugger.
 
