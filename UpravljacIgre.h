@@ -7,98 +7,140 @@
 class UpravljacIgre
 {
 public:
-	UpravljacIgre(Display d) {
-		d.stvoriKontekst();
+	UpravljacIgre(Display zaslon) {
+		zaslon.stvoriKontekst();
+		konstrukcijaObjekata(&zaslon);
+		dodijeliVrijednostStringovima();
 	pocetak:
-		Display* dP;;
-		dP = &d;
-			
-		Igrac i;
-		Igrac* iP = &i;
-			
-		i.postaviPocetneDimenzije(&d);
-			
-		//Loptica* lP = new Loptica();
-		Loptica lC;
-		lC.postaviPocetneDimenzije(&d);
-		//lP = &lC;
-			
-		//Protivnik* pP = new Protivnik();
-		Protivnik pC;
-		pC.postaviPocetneDimenzije(&d, &lC);
-		//pP = &pC;
-		KeyboardInput kInput;
-		KeyboardInput* pKInput=&kInput;
-		KeyListener kL;
-		InputListener* pKL;
-			
-		pKL = &kL;
-		kL.opPojava;
-		kInput.kLst;
-
-		pKInput->addListener(pKL);
-		pKL->dodajPojavu(iP);		
-		pKInput->pogon = true;
-
-		string uvod = "Press SPACE to start.";
-		string pobjeda = "You win!";
-		string poraz = "You lose!";
-		string revans = "Press SPACE to restart.";
-
-		while (pKInput->pogon==true) {
-			pKInput->updateInput();
-			d.clear(d.tamnoplava);
-			d.crtajTekst(uvod, d.Sirina / 2 - strlen(uvod.c_str()) * 7, d.Visina / 2 - 50);
-			d.commit();
-			if (i.stanjeTipke == RAZMAKNICA) {
-				while (pKInput->pogon == true) {
-					pKInput->updateInput();
-
-					otkrivanjeSudara(&d, &lC, &i, &pC);
-
-					i.kretanje(&d);
-					lC.kretanje(&d);
-					pC.kretanje(&d, &lC);
-
-					d.clear(d.tamnoplava);
-					d.crtajTekst(to_string(i.pogodak), d.Sirina / 4 - 17, d.Visina / 8);
-					d.crtajTekst(to_string(pC.pogodak), d.Sirina * 3 / 4 - 17, d.Visina / 8);
-					d.crtajBojom(d.bijela);
-					d.crtajPravokutnik(i.x, i.y, i.w, i.h, d.bijela);
-					d.crtajPravokutnik(pC.x, pC.y, pC.w, pC.h, d.bijela);
-					d.crtajPravokutnik(lC.x, lC.y, lC.w, lC.h, d.bijela);
-					d.crtajLiniju(d.Sirina / 2, 0, d.Sirina / 2, d.Visina, d.bijela);
-					d.crtajLiniju(d.Sirina / 2 - 1, 0, d.Sirina / 2 - 1, d.Visina, d.bijela);
-					d.commit();
+		igrac.postaviPocetneDimenzije(&zaslon);
+		loptica.postaviPocetneDimenzije(&zaslon);
+		protivnik.postaviPocetneDimenzije(&zaslon, &loptica);
+		while(ptrKInput->pogon){
+			ptrKInput->updateInput();
+			zaslon.clear(zaslon.tamnoplava);
+			zaslon.crtajTekst(uvod, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 2 - 50);
+			zaslon.commit();
+			if(igrac.stanjeTipke == RAZMAKNICA) {
+				while (ptrKInput->pogon) {
+					ptrKInput->updateInput();
+					otkrivanjeSudara(&zaslon, &loptica, &igrac, &protivnik);
+					igrac.kretanje(&zaslon);
+					loptica.kretanje(&zaslon);
+					protivnik.kretanje(&zaslon, &loptica);
+					zaslon.clear(zaslon.tamnoplava);
+					zaslon.crtajTekst(to_string(igrac.pogodak), zaslon.Sirina / 4 - 17, zaslon.Visina / 8);
+					zaslon.crtajTekst(to_string(protivnik.pogodak), zaslon.Sirina * 3 / 4 - 17, zaslon.Visina / 8);
+					zaslon.crtajBojom(zaslon.bijela);
+					zaslon.crtajPravokutnik(igrac.x, igrac.y, igrac.w, igrac.h, zaslon.bijela);
+					zaslon.crtajPravokutnik(protivnik.x, protivnik.y, protivnik.w, protivnik.h, zaslon.bijela);
+					zaslon.crtajPravokutnik(loptica.x, loptica.y, loptica.w, loptica.h, zaslon.bijela);
+					zaslon.crtajLiniju(zaslon.Sirina / 2, 0, zaslon.Sirina / 2, zaslon.Visina, zaslon.bijela);
+					zaslon.crtajLiniju(zaslon.Sirina / 2 - 1, 0, zaslon.Sirina / 2 - 1, zaslon.Visina, zaslon.bijela);
+					zaslon.commit();
 					SDL_Delay(1000 / 60);
-						
-					while (i.pogodak == 3) {
-						d.clear(d.tamnozelena);
-						d.crtajTekst(pobjeda, d.Sirina / 2 - strlen(uvod.c_str()) * 7, d.Visina / 2 - 50);
-						d.crtajTekst(revans, d.Sirina / 2 - strlen(uvod.c_str()) * 7, d.Visina / 3 * 2 - 50);
-						d.commit();
-						pKInput->updateInput();
-						if (i.stanjeTipke == RAZMAKNICA) goto pocetak;	
+					while(igrac.pogodak == 3 ) {
+						zaslon.clear(zaslon.tamnozelena);
+						zaslon.crtajTekst(pobjeda, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 2 - 50);
+						zaslon.crtajTekst(revans, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 3 * 2 - 50);
+						zaslon.commit();
+						SDL_Delay(1000 / 60);
+						ptrKInput->updateInput();
+						if (igrac.stanjeTipke == RAZMAKNICA) goto pocetak;	
 					}
-					while (pC.pogodak == 3) {
-						d.clear(d.tamnocrvena);
-						d.crtajTekst(poraz, d.Sirina / 2 - strlen(uvod.c_str()) * 7, d.Visina / 2 - 50);
-						d.crtajTekst(revans, d.Sirina / 2 - strlen(uvod.c_str()) * 7, d.Visina / 3 * 2 - 50);
-						d.commit();
-						pKInput->updateInput();
-						if (i.stanjeTipke == RAZMAKNICA) goto pocetak;
+					while(protivnik.pogodak == 3 ) {
+						zaslon.clear(zaslon.tamnocrvena);
+						zaslon.crtajTekst(poraz, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 2 - 50);
+						zaslon.crtajTekst(revans, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 3 * 2 - 50);
+						zaslon.commit();
+						SDL_Delay(1000 / 60);
+						ptrKInput->updateInput();
+						if (igrac.stanjeTipke == RAZMAKNICA) goto pocetak;
 					}
 				}
 			}
 		}
 	}
 
+	void konstrukcijaObjekata(Display* ptrZaslon) {
+		ptrIgrac = &igrac;
+		Protivnik protivnik;
+		ptrKInput = &kInput;
+		InputListener* ptrKListener;
+		ptrKListener = &kListener;
+		kListener.opPojava;
+		kInput.kLst;
+		ptrKInput->addListener(ptrKListener);
+		ptrKListener->dodajPojavu(ptrIgrac);
+		ptrKInput->pogon = true;
+	}
 	void otkrivanjeSudara(Display* d, Loptica* l, Igrac* i, Protivnik* p) {
 		if ((l->x <= i->w) && ((l->y + l->h) >= i->y) && (i->y + i->h) >= (l->y + l->h)) { l->dx *= -1; }
 		else if (l->x <= i->w) { p->uvecajPogodak(); l->postaviPocetneDimenzije(d); }
 		if ((l->x+l->h >= p->x) && ((l->y + l->h) >= p->y) && (p->y + p->h) >= (l->y + l->h)) { l->dx *= -1; }
 		else if (l->x + l->w > p->x) { i->uvecajPogodak(); l->postaviPocetneDimenzije(d); }
 	}
+	/*bool sudarDesniOdbija(Display* ptrZaslon, Loptica* ptrLoptica, Igrac* ptrIgrac, Protivnik* ptrProtivnik) {
+	
+	}*/
+	void dodijeliVrijednostStringovima() {
+		uvod = "Press SPACE to start.";
+		pobjeda = "You win!";
+		poraz = "You lose!";
+		revans = "Press SPACE to restart.";
+	}
+	void iscrtavanjeZavrsnogZaslona(Display zaslon, bool uvjetPobjede) {
+		if (uvjetPobjede) {
+			zaslon.clear(zaslon.tamnozelena);
+			zaslon.crtajTekst(pobjeda, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 2 - 50);
+		}
+		else {
+			zaslon.clear(zaslon.tamnocrvena);
+			zaslon.crtajTekst(poraz, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 2 - 50);
+		}
+		zaslon.crtajTekst(revans, zaslon.Sirina / 2 - strlen(uvod.c_str()) * 7, zaslon.Visina / 3 * 2 - 50);
+		zaslon.commit();
+		SDL_Delay(1000 / 60);
+		ptrKInput->updateInput();
+		if (igrac.stanjeTipke == RAZMAKNICA) {
+			igrac.postaviPocetneDimenzije(&zaslon);
+			loptica.postaviPocetneDimenzije(&zaslon);
+			protivnik.postaviPocetneDimenzije(&zaslon, &loptica);
+		}
+		else iscrtavanjeZavrsnogZaslona(zaslon, uvjetPobjede);
+	}
+	
+	Igrac igrac;
+	Loptica loptica;
+	Protivnik protivnik;
+	KeyboardInput kInput;
+	KeyListener kListener;
+
+	Display* ptrZaslon;
+	Igrac* ptrIgrac;
+	Loptica* ptrLoptica;
+	Protivnik* ptrProtivnik;
+	KeyboardInput* ptrKInput;
+	InputListener* ptrKListener;
+
+	string uvod;
+	string pobjeda;
+	string poraz;
+	string revans;
+
+	/*
+	bool sudarDesniOdbija = (ptrLoptica->x <= ptrIgrac->w)
+							&& ((ptrLoptica->y + ptrLoptica->h) >= ptrIgrac->y)
+							&& (ptrIgrac->y + ptrIgrac->h) >= (ptrLoptica->y + ptrLoptica->h);
+	bool sudarLijeviOdbija = (ptrLoptica->x + ptrLoptica->h >= ptrProtivnik->x)
+							&& ((ptrLoptica->y + ptrLoptica->h) >= ptrProtivnik->y)
+							&& (ptrProtivnik->y + ptrProtivnik->h) >= (ptrLoptica->y + ptrLoptica->h);
+	bool sudarDesniPogodak = ptrLoptica->x + ptrLoptica->w > ptrProtivnik->x;
+	bool sudarLijeviPogodak = ptrLoptica->x <= ptrIgrac->w;
+	bool uvjetPobjede = igrac.pogodak == 3;
+	bool uvjetPoraza = protivnik.pogodak == 3;
+	*/
+
+	
 };
 
 	
